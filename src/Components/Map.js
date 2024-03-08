@@ -22,6 +22,8 @@ import Point from 'ol/geom/Point';
 import { Icon, Style } from 'ol/style'; // Import Icon and Style classes 
 import { getArea } from 'ol/sphere'; // Import getArea function from ol/sphere
 import * as ol from 'ol'; // Import OpenLayers as ol namespace
+import Overlay from 'ol/Overlay'; // Add this import for Overlay class
+
 
 // Define a functional component named MapComponent
 const MapComponent = () => {
@@ -48,8 +50,8 @@ const MapComponent = () => {
         map.current = new Map({
             target: 'map', // Target element ID
             view: new View({
-                center: fromLonLat([-122.42, 37.779]), 
-                zoom: 12 
+                center: fromLonLat([-122.42, 37.779]),
+                zoom: 12
             })
         });
 
@@ -127,15 +129,57 @@ const MapComponent = () => {
             type: 'Polygon'
         });
 
-        // when polygon is drawn calculate area
+        // when polygon is drawn calculate area and line lengths
         draw.current.on('drawend', (event) => {
             const polygon = event.feature.getGeometry();
-            const area = getArea(polygon);
+            const coordinates = polygon.getCoordinates()[0]; // Get the coordinates of the polygon
+            let totalLength = 0;
+
+            // Calculate and display the length of each line segment
+            coordinates.slice(1).forEach((coord, index) => {
+                const prevCoord = coordinates[index];
+                const lineLength = Math.sqrt(Math.pow(coord[0] - prevCoord[0], 2) + Math.pow(coord[1] - prevCoord[1], 2));
+                totalLength += lineLength;
+
+                // Calculate the midpoint of the line segment
+                const midpoint = [(coord[0] + prevCoord[0]) / 2, (coord[1] + prevCoord[1]) / 2];
+
+                // Create a new overlay with the line length
+                const overlayElement = document.createElement('div');
+                overlayElement.innerText = `${lineLength.toFixed(2)} m`;
+                const overlay = new Overlay({
+                    position: midpoint,
+                    element: overlayElement,
+                    positioning: 'center-center',
+                    offset: [0, -15],
+                });
+
+                // Style the overlay
+                overlayElement.style.cssText = `
+                    font-weight: bold;
+                    background: rgba(255, 255, 255, 0.8);
+                    padding: 1px 1px;
+                    border-radius: 1px;
+                    border: 1px solid #333;
+                    transform: translate(-50%, -50%);
+                `;
+
+                map.current.addOverlay(overlay);
+            });
+
+            // Log the total length of the polygon
+            console.log('Total length:', totalLength.toFixed(2));
+
+            // Calculate the area of the polygon
+            const area = polygon.getArea();
             setPolygonArea(area);
             setDrawnPolygon(polygon);
         });
+
         map.current.addInteraction(draw.current);
-    }
+    };
+
+
     const addTranslateInteraction = () => {
         if (translate.current) {
             map.current.removeInteraction(translate.current);
@@ -151,14 +195,12 @@ const MapComponent = () => {
             <div id="map" style={{ padding: '5px', width: '80%', height: '500px', position: 'relative', marginBottom: '20px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', border: '1px solid #e0e0e0', backgroundColor: '#f9f9f9' }}>
                 {/* Display polygon area if available */}
                 {polygonArea && (
-                    <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>
-                        Polygon Area: {polygonArea.toFixed(2)} square meters
+                    <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>Area: {polygonArea.toFixed(2)} square meters
                     </div>
                 )}
                 {/* Display marker coordinates if available */}
                 {markerCoordinates && mapMode === 'placeMarker' && (
-                    <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>
-                        Marker Coordinates: {markerCoordinates.latitude.toFixed(5)}, {markerCoordinates.longitude.toFixed(5)}
+                    <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>Coordinates: {markerCoordinates.latitude.toFixed(5)}, {markerCoordinates.longitude.toFixed(5)}
                     </div>
                 )}
                 {/* Buttons for changing map mode */}
