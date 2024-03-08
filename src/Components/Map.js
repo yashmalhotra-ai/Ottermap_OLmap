@@ -201,11 +201,13 @@ const MapComponent = () => {
                     </div>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'center', width: '80%', margin: '0 auto', marginTop: '10px', marginBottom: '10px' }}>
-                    <button style={{ flex: 1, padding: '10px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('draw') }}>Draw Polygon</button>
-                    <button style={{ flex: 1, padding: '10px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('placeMarker'); setPolygonArea(null); }}>Place Marker</button>
+                    <button style={{ flex: 1, padding: '10px', background: mapMode === 'draw' ? '#007bff' : 'black', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('draw') }}>Draw Polygon</button>
+                    <button style={{ flex: 1, padding: '10px', background: mapMode === 'placeMarker' ? '#007bff' : 'black', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('placeMarker'); setPolygonArea(null); }}>Place Marker</button>
                 </div>
             </div>
         </div>
+
+
     );
 };
 
