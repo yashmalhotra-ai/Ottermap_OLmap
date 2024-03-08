@@ -20,7 +20,6 @@ import { apply } from 'ol-mapbox-style';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { Icon, Style } from 'ol/style'; // Import Icon and Style classes 
-import { getArea } from 'ol/sphere'; // Import getArea function from ol/sphere
 import * as ol from 'ol'; // Import OpenLayers as ol namespace
 import Overlay from 'ol/Overlay'; // Add this import for Overlay class
 
@@ -193,17 +192,14 @@ const MapComponent = () => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
             <div id="map" style={{ padding: '5px', width: '80%', height: '500px', position: 'relative', marginBottom: '20px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', border: '1px solid #e0e0e0', backgroundColor: '#f9f9f9' }}>
-                {/* Display polygon area if available */}
                 {polygonArea && (
                     <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>Area: {polygonArea.toFixed(2)} square meters
                     </div>
                 )}
-                {/* Display marker coordinates if available */}
                 {markerCoordinates && mapMode === 'placeMarker' && (
                     <div style={{ position: 'absolute', top: '55px', right: '10px', background: 'rgba(255, 255, 255, 50%)', zIndex: 100, padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#333', fontWeight: 'bold' }}>Coordinates: {markerCoordinates.latitude.toFixed(5)}, {markerCoordinates.longitude.toFixed(5)}
                     </div>
                 )}
-                {/* Buttons for changing map mode */}
                 <div style={{ display: 'flex', justifyContent: 'center', width: '80%', margin: '0 auto', marginTop: '10px', marginBottom: '10px' }}>
                     <button style={{ flex: 1, padding: '10px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('draw') }}>Draw Polygon</button>
                     <button style={{ flex: 1, padding: '10px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={() => { setMapMode('placeMarker'); setPolygonArea(null); }}>Place Marker</button>

@@ -5,8 +5,8 @@ import MapComponent1 from './Components/Map';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>OpenLayers Map</h1>
+      <header style={{ display: 'flex', justifyContent: 'center' }} className="App-header">
+        <h1 >OpenLayers Map</h1>
       </header>
       <MapComponent1 />
       {/* <MapComponent /> */}
